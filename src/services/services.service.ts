@@ -1,26 +1,59 @@
 import { Injectable } from '@nestjs/common';
-import { CreateServiceDto } from './dto/create-service.dto';
+import { Category, CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Service } from './entities/service.model';
 
 @Injectable()
 export class ServicesService {
-  create(createServiceDto: CreateServiceDto) {
-    return 'This action adds a new service';
+  constructor(
+    @InjectModel(Service)
+    private serviceModel: typeof Service,
+  ) {}
+
+  async create(createServiceDto: CreateServiceDto): Promise<Service> {
+    return await this.serviceModel.create(createServiceDto as any);
   }
 
-  findAll() {
-    return `This action returns all services`;
+  async findAll(): Promise<Service[]> {
+    return await this.serviceModel.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} service`;
+  async findOne(id: string): Promise<Service> {
+    const service = await this.serviceModel.findByPk(id);
+    if (!service) {
+      throw new Error('Service not found');
+    }
+    return service;
   }
 
-  update(id: number, updateServiceDto: UpdateServiceDto) {
-    return `This action updates a #${id} service`;
+  async update(
+    id: string,
+    updateServiceDto: UpdateServiceDto,
+  ): Promise<Service> {
+    const service = await this.serviceModel.findByPk(id);
+    if (!service) {
+      throw new Error('Service not found');
+    }
+    await service.update(updateServiceDto as any);
+    return service;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} service`;
+  async remove(id: string): Promise<void> {
+    const service = await this.serviceModel.findByPk(id);
+    if (!service) {
+      throw new Error('Service not found');
+    }
+    await service.destroy();
+    return;
+  }
+
+  async getActiveServicesByCategory(category: Category): Promise<Service[]> {
+    return await this.serviceModel.findAll({
+      where: {
+        isAvailable: true,
+        category,
+      },
+    });
   }
 }

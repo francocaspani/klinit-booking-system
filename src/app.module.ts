@@ -18,6 +18,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
       username: 'postgres',
       password: 'postgres',
       database: 'klinit',
+      autoLoadModels: true,
+      synchronize: true,
     }),
   ],
   controllers: [AppController],

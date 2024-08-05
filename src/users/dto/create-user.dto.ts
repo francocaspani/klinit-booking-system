@@ -1,3 +1,5 @@
+export type Role = 'worker' | 'client';
+
 export class CreateUserDto {
   id: string;
   email: string;
@@ -5,6 +7,7 @@ export class CreateUserDto {
   firstName: string;
   lastName: string;
   address: string;
-  role: string;
+  phoneNumber: string;
+  role: Role;
   isAdmin: boolean;
 }

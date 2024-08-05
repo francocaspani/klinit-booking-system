@@ -27,16 +27,31 @@ export class BookingsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.bookingsService.findOne(+id);
+    return this.bookingsService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
-    return this.bookingsService.update(+id, updateBookingDto);
+    return this.bookingsService.update(id, updateBookingDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.bookingsService.remove(+id);
+    return this.bookingsService.remove(id);
+  }
+
+  @Patch(':id/cancel')
+  cancel(@Param('id') id: string) {
+    return this.bookingsService.cancel(id);
+  }
+
+  @Get('client/:id')
+  findByClient(@Param('id') id: string) {
+    return this.bookingsService.findByClient(id);
+  }
+
+  @Get('worker/:id')
+  findByWorker(@Param('id') id: string) {
+    return this.bookingsService.findByWorker(id);
   }
 }
