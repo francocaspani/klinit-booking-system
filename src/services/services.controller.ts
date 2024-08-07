@@ -6,6 +6,9 @@ import {
   Patch,
   Param,
   Delete,
+  HttpException,
+  ParseUUIDPipe,
+  ParseEnumPipe,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { Category, CreateServiceDto } from './dto/create-service.dto';
@@ -16,32 +19,61 @@ export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   @Post()
-  create(@Body() createServiceDto: CreateServiceDto) {
-    return this.servicesService.create(createServiceDto);
+  async create(@Body() createServiceDto: CreateServiceDto) {
+    try {
+      await this.servicesService.create(createServiceDto);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.servicesService.findAll();
+  async findAll() {
+    try {
+      await this.servicesService.findAll();
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.servicesService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    try {
+      await this.servicesService.findOne(id);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.servicesService.update(id, updateServiceDto);
+  async update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateServiceDto: UpdateServiceDto,
+  ) {
+    try {
+      await this.servicesService.update(id, updateServiceDto);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.servicesService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    try {
+      await this.servicesService.remove(id);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Get('category/:category')
-  getActiveServicesByCategory(@Param('category') category: Category) {
-    return this.servicesService.getActiveServicesByCategory(category);
+  async getActiveServicesByCategory(
+    @Param('category', new ParseEnumPipe(Category)) category: Category,
+  ) {
+    try {
+      await this.servicesService.getActiveServicesByCategory(category);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 }

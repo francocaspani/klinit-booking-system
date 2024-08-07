@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
@@ -16,42 +18,77 @@ export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Post()
-  create(@Body() createBookingDto: CreateBookingDto) {
-    return this.bookingsService.create(createBookingDto);
+  async create(@Body() createBookingDto: CreateBookingDto) {
+    try {
+      await this.bookingsService.create(createBookingDto);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.bookingsService.findAll();
+  async findAll() {
+    try {
+      await this.bookingsService.findAll();
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bookingsService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    try {
+      await this.bookingsService.findOne(id);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
-    return this.bookingsService.update(id, updateBookingDto);
+  async update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateBookingDto: UpdateBookingDto,
+  ) {
+    try {
+      await this.bookingsService.update(id, updateBookingDto);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bookingsService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    try {
+      await this.bookingsService.remove(id);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Patch(':id/cancel')
-  cancel(@Param('id') id: string) {
-    return this.bookingsService.cancel(id);
+  async cancel(@Param('id', new ParseUUIDPipe()) id: string) {
+    try {
+      await this.bookingsService.cancel(id);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Get('client/:id')
-  findByClient(@Param('id') id: string) {
-    return this.bookingsService.findByClient(id);
+  async findByClient(@Param('id', new ParseUUIDPipe()) id: string) {
+    try {
+      await this.bookingsService.findByClient(id);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 
   @Get('worker/:id')
-  findByWorker(@Param('id') id: string) {
-    return this.bookingsService.findByWorker(id);
+  async findByWorker(@Param('id', new ParseUUIDPipe()) id: string) {
+    try {
+      await this.bookingsService.findByWorker(id);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
   }
 }

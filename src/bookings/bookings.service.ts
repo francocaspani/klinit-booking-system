@@ -49,12 +49,21 @@ export class BookingsService {
       }),
     );
 
-    const total = services.reduce((acc, service) => acc + service.price, 0);
+    const totalPrice = services.reduce(
+      (acc, service) => acc + service.price,
+      0,
+    );
+
+    const totalDuration = services.reduce(
+      (acc, service) => acc + service.duration,
+      0,
+    );
 
     const booking = await this.bookingModel.create({
       ...createBookingDto,
       services: undefined,
-      total,
+      totalPrice,
+      totalDuration,
     });
 
     await booking.$set('client', userExists);
@@ -94,25 +103,40 @@ export class BookingsService {
       }
     }
 
-    const services = await Promise.all(
-      updateBookingDto.services.map(async (serviceId) => {
-        const service = await this.serviceModel.findByPk(serviceId);
-        if (!service) {
-          throw new Error(`Service with ID ${serviceId} not found`);
-        }
-        return service;
-      }),
+    let services;
+    if (updateBookingDto.services && updateBookingDto.services.length > 0) {
+      services = await Promise.all(
+        updateBookingDto.services.map(async (serviceId) => {
+          const service = await this.serviceModel.findByPk(serviceId);
+          if (!service) {
+            throw new Error(`Service with ID ${serviceId} not found`);
+          }
+          return service;
+        }),
+      );
+    }
+
+    const totalPrice = services?.reduce(
+      (acc, service) => acc + service.price,
+      0,
     );
 
-    const total = services.reduce((acc, service) => acc + service.price, 0);
+    const totalDuration = services?.reduce(
+      (acc, service) => acc + service.duration,
+      0,
+    );
 
     await booking.update({
       ...updateBookingDto,
       services: undefined,
-      total,
+      ...(totalPrice && { totalPrice }),
+      ...(totalDuration && { totalDuration }),
     });
 
-    await booking.$set('services', services);
+    if (services) {
+      await booking.$set('services', services);
+    }
+
     if (workerExists) {
       await booking.$set('worker', workerExists);
     }

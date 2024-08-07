@@ -42,7 +42,11 @@ export class Booking extends Model {
 
   @AllowNull(false)
   @Column
-  total: number;
+  totalPrice: number;
+
+  @AllowNull(false)
+  @Column
+  totalDuration: number;
 
   @IsUUID(4)
   @ForeignKey(() => User)

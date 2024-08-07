@@ -5,22 +5,26 @@ import { UsersModule } from './users/users.module';
 import { ServicesModule } from './services/services.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    UsersModule,
-    ServicesModule,
-    BookingsModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'klinit',
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+      username: process.env.DB_USERNAME,
+      password: 'secret',
+      database: process.env.DB_DBNAME,
       autoLoadModels: true,
       synchronize: true,
     }),
+    UsersModule,
+    ServicesModule,
+    BookingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
