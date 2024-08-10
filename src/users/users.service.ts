@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, Role } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.model';
 import { InjectModel } from '@nestjs/sequelize';
@@ -12,11 +12,25 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    const user = await this.userModel.findOne({
+      where: { email: createUserDto.email },
+    });
+    if (user) {
+      throw new Error('User already exists');
+    }
     return await this.userModel.create(createUserDto as any);
   }
 
   async findOne(id: string): Promise<User> {
     const user = await this.userModel.findByPk(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    const user = await this.userModel.findOne({ where: { email } });
     if (!user) {
       throw new Error('User not found');
     }
@@ -39,5 +53,22 @@ export class UsersService {
     }
     await user.destroy();
     return;
+  }
+
+  async verifyEmail(id: string): Promise<User> {
+    const user = await this.userModel.findByPk(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await user.update({ emailVerified: true });
+    return user;
+  }
+
+  async getRole(id: string): Promise<Role> {
+    const user = await this.userModel.findByPk(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user.role;
   }
 }

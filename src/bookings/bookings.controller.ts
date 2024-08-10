@@ -8,12 +8,17 @@ import {
   Delete,
   HttpException,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/users/dto/create-user.dto';
 
 @Controller('bookings')
+@UseGuards(AuthGuard)
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
@@ -27,6 +32,7 @@ export class BookingsController {
   }
 
   @Get()
+  @Roles([Role.Worker, Role.Admin])
   async findAll() {
     try {
       await this.bookingsService.findAll();
@@ -45,6 +51,7 @@ export class BookingsController {
   }
 
   @Patch(':id')
+  @Roles([Role.Client, Role.Admin])
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateBookingDto: UpdateBookingDto,
@@ -57,6 +64,7 @@ export class BookingsController {
   }
 
   @Delete(':id')
+  @Roles([Role.Admin])
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
       await this.bookingsService.remove(id);
@@ -66,6 +74,7 @@ export class BookingsController {
   }
 
   @Patch(':id/cancel')
+  @Roles([Role.Client, Role.Admin])
   async cancel(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
       await this.bookingsService.cancel(id);
@@ -75,6 +84,7 @@ export class BookingsController {
   }
 
   @Get('client/:id')
+  @Roles([Role.Client, Role.Admin])
   async findByClient(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
       await this.bookingsService.findByClient(id);
@@ -84,6 +94,7 @@ export class BookingsController {
   }
 
   @Get('worker/:id')
+  @Roles([Role.Admin, Role.Worker])
   async findByWorker(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
       await this.bookingsService.findByWorker(id);

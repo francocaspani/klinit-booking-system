@@ -1,33 +1,33 @@
 import {
-  IsBoolean,
   IsEmail,
+  IsEmpty,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsString,
-  IsUUID,
 } from 'class-validator';
 
 export enum Role {
   Worker = 'worker',
   Client = 'client',
+  Admin = 'admin',
 }
 
 export class CreateUserDto {
-  @IsUUID(4)
+  @IsEmpty()
   id: string;
 
   @IsEmail()
-  email: string;
-
   @IsNotEmpty()
-  password: string;
+  email: string;
 
   @IsNotEmpty()
   @IsString()
   firstName: string;
 
   @IsString()
+  @IsOptional()
   lastName: string;
 
   @IsNotEmpty()
@@ -38,10 +38,10 @@ export class CreateUserDto {
   @IsPhoneNumber('AR')
   phoneNumber: string;
 
-  @IsNotEmpty()
   @IsEnum(Role)
+  @IsOptional()
   role: Role;
 
-  @IsBoolean()
-  isAdmin: boolean;
+  @IsEmpty()
+  emailVerified: boolean;
 }

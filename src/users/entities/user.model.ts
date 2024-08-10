@@ -8,13 +8,16 @@ import {
   DataType,
   AllowNull,
   HasMany,
+  Default,
 } from 'sequelize-typescript';
 import { Booking } from 'src/bookings/entities/booking.model';
+import { Role } from '../dto/create-user.dto';
 
 @Table
 export class User extends Model {
   @PrimaryKey
   @IsUUID(4)
+  @Default(DataType.UUIDV4)
   @Column
   id: string;
 
@@ -22,10 +25,6 @@ export class User extends Model {
   @AllowNull(false)
   @Column
   email: string;
-
-  @AllowNull(false)
-  @Column
-  password: string;
 
   @AllowNull(false)
   @Column
@@ -42,14 +41,16 @@ export class User extends Model {
   phoneNumber: string;
 
   @AllowNull(false)
+  @Default('client')
   @Column({
-    type: DataType.ENUM('worker', 'client'),
+    type: DataType.ENUM('worker', 'client', 'admin'),
   })
-  role: 'worker' | 'client';
+  role: Role;
 
   @AllowNull(false)
-  @Column({ defaultValue: false })
-  isAdmin: boolean;
+  @Default(false)
+  @Column
+  emailVerified: boolean;
 
   @HasMany(() => Booking, 'clientId')
   clientBookings: Booking[];

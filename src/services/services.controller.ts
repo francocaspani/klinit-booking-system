@@ -9,16 +9,22 @@ import {
   HttpException,
   ParseUUIDPipe,
   ParseEnumPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { Category, CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/users/dto/create-user.dto';
 
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
+  @Roles([Role.Admin])
   async create(@Body() createServiceDto: CreateServiceDto) {
     try {
       await this.servicesService.create(createServiceDto);
@@ -28,6 +34,8 @@ export class ServicesController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
+  @Roles([Role.Admin])
   async findAll() {
     try {
       await this.servicesService.findAll();
@@ -37,6 +45,7 @@ export class ServicesController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
       await this.servicesService.findOne(id);
@@ -46,6 +55,8 @@ export class ServicesController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
+  @Roles([Role.Admin])
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateServiceDto: UpdateServiceDto,
@@ -58,6 +69,8 @@ export class ServicesController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
+  @Roles([Role.Admin])
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
       await this.servicesService.remove(id);

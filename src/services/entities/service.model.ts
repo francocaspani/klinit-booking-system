@@ -3,6 +3,7 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  Default,
   IsUUID,
   Model,
   PrimaryKey,
@@ -15,6 +16,7 @@ import { BookingService } from 'src/bookings/entities/bookingService.model';
 export class Service extends Model<Service> {
   @PrimaryKey
   @IsUUID(4)
+  @Default(DataType.UUIDV4)
   @Column
   id: string;
 
