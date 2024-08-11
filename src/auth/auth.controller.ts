@@ -3,8 +3,8 @@ import {
   Controller,
   Get,
   NotFoundException,
-  Param,
   Post,
+  Query,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -15,7 +15,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Get('generate-code')
-  async generateCode(@Param('email') email: string) {
+  async generateCode(@Query('email') email: string) {
     try {
       return await this.authService.generateCode(email);
     } catch (error) {
@@ -26,10 +26,7 @@ export class AuthController {
   @Post('login')
   async verifyCodeAndSignIn(@Body() singInDto: SingInDto) {
     try {
-      return await this.authService.verifyCodeAndSignIn(
-        singInDto.email,
-        singInDto.code,
-      );
+      return await this.authService.verifyCodeAndSignIn(singInDto);
     } catch (error) {
       throw new UnauthorizedException(error.message);
     }

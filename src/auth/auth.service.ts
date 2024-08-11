@@ -1,30 +1,35 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { generateCode } from './utils/codeGenerator';
-import { storeCode, verifyCode } from './utils/cacheService';
 import { JwtService } from '@nestjs/jwt';
+import { CacheService } from './utils/cache.service';
+import { SingInDto } from './dto/signin-user.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private cacheService: CacheService,
   ) {}
 
   async generateCode(email: string): Promise<string> {
     const user = await this.usersService.findByEmail(email);
     const code = generateCode();
-    storeCode(user.email, code);
+    console.log('code', code);
+    await this.cacheService.storeCode(user.email, code);
     // Send code to email
     return 'Code sent to email';
   }
 
   async verifyCodeAndSignIn(
-    email: string,
-    code: string,
+    singInDto: SingInDto,
   ): Promise<{ access_token: string }> {
-    const user = await this.usersService.findByEmail(email);
-    const verify = verifyCode(user.email, code);
+    const user = await this.usersService.findByEmail(singInDto.email);
+    const verify = await this.cacheService.verifyCode(
+      user.email,
+      singInDto.code,
+    );
     if (!verify) {
       throw new UnauthorizedException('Invalid code');
     }

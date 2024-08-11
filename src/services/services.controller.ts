@@ -17,13 +17,14 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from 'src/users/dto/create-user.dto';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles([Role.Admin])
   async create(@Body() createServiceDto: CreateServiceDto) {
     try {
@@ -34,7 +35,7 @@ export class ServicesController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles([Role.Admin])
   async findAll() {
     try {
@@ -55,7 +56,7 @@ export class ServicesController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles([Role.Admin])
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -69,7 +70,7 @@ export class ServicesController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles([Role.Admin])
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     try {

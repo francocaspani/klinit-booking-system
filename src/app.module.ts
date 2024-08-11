@@ -7,6 +7,7 @@ import { BookingsModule } from './bookings/bookings.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { EmailsModule } from './emails/emails.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
     ServicesModule,
     BookingsModule,
     AuthModule,
+    EmailsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

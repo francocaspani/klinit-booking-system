@@ -11,13 +11,17 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const roles = this.reflector.get(Roles, context.getHandler());
-    if (!roles) {
-      return true;
+    try {
+      const roles = this.reflector.get(Roles, context.getHandler());
+      if (!roles) {
+        return true;
+      }
+      const request = context.switchToHttp().getRequest();
+      const user = request.user;
+      const userRoles = await this.usersService.getRole(user.sub);
+      return roles.some((role) => userRoles === role);
+    } catch (error) {
+      return false;
     }
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
-    const userRoles = await this.usersService.getRole(user.sub);
-    return roles.some((role) => userRoles === role);
   }
 }

@@ -3,12 +3,15 @@ import { CreateUserDto, Role } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.model';
 import { InjectModel } from '@nestjs/sequelize';
+import { EmailsService } from 'src/emails/emails.service';
+import { EmailType } from 'src/emails/dto/send-email.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User)
     private userModel: typeof User,
+    private emailService: EmailsService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -18,7 +21,12 @@ export class UsersService {
     if (user) {
       throw new Error('User already exists');
     }
-    return await this.userModel.create(createUserDto as any);
+    const newUser = await this.userModel.create(createUserDto as any);
+    await this.emailService.sendEmail({
+      to: newUser.email,
+      type: EmailType.Verification,
+    });
+    return 'User created, vefify your email';
   }
 
   async findOne(id: string): Promise<User> {

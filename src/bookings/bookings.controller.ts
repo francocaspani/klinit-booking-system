@@ -16,9 +16,10 @@ import { UpdateBookingDto } from './dto/update-booking.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from 'src/users/dto/create-user.dto';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('bookings')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
