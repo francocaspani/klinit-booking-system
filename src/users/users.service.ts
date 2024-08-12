@@ -25,6 +25,9 @@ export class UsersService {
     await this.emailService.sendEmail({
       to: newUser.email,
       type: EmailType.Verification,
+      replacements: {
+        token: newUser.id,
+      },
     });
     return 'User created, vefify your email';
   }

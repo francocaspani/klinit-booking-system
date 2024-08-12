@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum } from 'class-validator';
+import { IsEmail, IsEnum, IsObject, IsOptional } from 'class-validator';
 
 export enum EmailType {
   Verification = 'verification',
@@ -11,4 +11,8 @@ export class SendEmailDto {
 
   @IsEnum(EmailType)
   type: EmailType;
+
+  @IsOptional()
+  @IsObject()
+  replacements?: Record<string, any>;
 }

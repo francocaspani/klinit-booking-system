@@ -4,6 +4,7 @@ import { createTransport } from 'nodemailer';
 import { SendEmailDto } from './dto/send-email.dto';
 import { EmailTemplatesProvider } from './utils/email.templates';
 import { google } from 'googleapis';
+import Handlebars from 'handlebars';
 
 type GOOGLE_MAIL_SERVICE_KEYS =
   | 'clientId'
@@ -55,6 +56,9 @@ export class EmailsService {
       const { subject, html } = this.emailTemplatesProvider.getTemplate(
         sendEmailDto.type,
       );
+      const template = Handlebars.compile(html);
+      const replacements = sendEmailDto.replacements;
+      const htmlToSend = template(replacements);
       const mailOptions = {
         from: {
           name: 'Klinit',
@@ -64,7 +68,7 @@ export class EmailsService {
         },
         to: sendEmailDto.to,
         subject,
-        html,
+        html: htmlToSend,
       };
       await smtpTransport.sendMail(mailOptions);
     } catch (error: any) {

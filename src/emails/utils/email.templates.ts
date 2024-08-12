@@ -8,6 +8,8 @@ const verificationPath = join(
   '../../../templates/verification.html',
 );
 
+const accessPath = join(__dirname, '../../../templates/access.html');
+
 @Injectable()
 export class EmailTemplatesProvider {
   private templates: Map<EmailType, { subject: string; html: string }> =
@@ -21,8 +23,8 @@ export class EmailTemplatesProvider {
     });
 
     this.templates.set(EmailType.Access, {
-      subject: 'Password Reset',
-      html: '<h1>Password Reset</h1><p>Click the link below to reset your password.</p>',
+      subject: 'Código de acceso',
+      html: readFileSync(accessPath, 'utf8'),
     });
 
     // Add more templates as needed

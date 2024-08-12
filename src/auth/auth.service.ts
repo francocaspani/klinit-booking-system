@@ -4,6 +4,8 @@ import { generateCode } from './utils/codeGenerator';
 import { JwtService } from '@nestjs/jwt';
 import { CacheService } from './utils/cache.service';
 import { SingInDto } from './dto/signin-user.dto';
+import { EmailsService } from 'src/emails/emails.service';
+import { EmailType } from 'src/emails/dto/send-email.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,14 +13,20 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private cacheService: CacheService,
+    private emailService: EmailsService,
   ) {}
 
   async generateCode(email: string): Promise<string> {
     const user = await this.usersService.findByEmail(email);
     const code = generateCode();
-    console.log('code', code);
     await this.cacheService.storeCode(user.email, code);
-    // Send code to email
+    await this.emailService.sendEmail({
+      to: user.email,
+      type: EmailType.Access,
+      replacements: {
+        code,
+      },
+    });
     return 'Code sent to email';
   }
 

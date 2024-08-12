@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CacheModule } from '@nestjs/cache-manager';
 import { CacheService } from './utils/cache.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EmailsModule } from 'src/emails/emails.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
     CacheModule.register(),
+    EmailsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, CacheService],

@@ -90,8 +90,8 @@ export class UsersController {
     }
   }
 
-  @Post('verify-email/:token')
-  async verifyEmail(@Param('token') token: string) {
+  @Get('verify-email/:token')
+  async verifyEmail(@Param('token', new ParseUUIDPipe()) token: string) {
     try {
       return await this.usersService.verifyEmail(token);
     } catch (error) {
