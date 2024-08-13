@@ -39,7 +39,7 @@ export class Booking extends Model {
   @BelongsToMany(() => Service, () => BookingService)
   services: Service[];
 
-  @AllowNull(false)
+  @Default(false)
   @Column
   isCancelled: boolean;
 
@@ -49,7 +49,7 @@ export class Booking extends Model {
 
   @AllowNull(false)
   @Column
-  totalDuration: number;
+  totalDurationInMinutes: number;
 
   @IsUUID(4)
   @ForeignKey(() => User)

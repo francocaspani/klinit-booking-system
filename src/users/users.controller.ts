@@ -32,6 +32,17 @@ export class UsersController {
     }
   }
 
+  @Get()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles([Role.Admin])
+  async findAll() {
+    try {
+      return await this.usersService.findAll();
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Get('me')
   @UseGuards(AuthGuard)
   async getMe(@Request() req: any) {
@@ -94,6 +105,20 @@ export class UsersController {
   async verifyEmail(@Param('token', new ParseUUIDPipe()) token: string) {
     try {
       return await this.usersService.verifyEmail(token);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch(':id/role')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles([Role.Admin])
+  async setRole(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body('role') role: Role,
+  ) {
+    try {
+      return await this.usersService.setRole(id, role);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

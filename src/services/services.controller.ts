@@ -39,7 +39,7 @@ export class ServicesController {
   @Roles([Role.Admin])
   async findAll() {
     try {
-      await this.servicesService.findAll();
+      return await this.servicesService.findAll();
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
@@ -49,7 +49,7 @@ export class ServicesController {
   @UseGuards(AuthGuard)
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
-      await this.servicesService.findOne(id);
+      return await this.servicesService.findOne(id);
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
@@ -63,7 +63,7 @@ export class ServicesController {
     @Body() updateServiceDto: UpdateServiceDto,
   ) {
     try {
-      await this.servicesService.update(id, updateServiceDto);
+      return await this.servicesService.update(id, updateServiceDto);
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
@@ -85,7 +85,7 @@ export class ServicesController {
     @Param('category', new ParseEnumPipe(Category)) category: Category,
   ) {
     try {
-      await this.servicesService.getActiveServicesByCategory(category);
+      return await this.servicesService.getActiveServicesByCategory(category);
     } catch (error) {
       throw new HttpException(error.message, 400);
     }

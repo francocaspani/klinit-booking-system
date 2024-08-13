@@ -9,6 +9,7 @@ import {
   HttpException,
   ParseUUIDPipe,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
@@ -36,7 +37,17 @@ export class BookingsController {
   @Roles([Role.Worker, Role.Admin])
   async findAll() {
     try {
-      await this.bookingsService.findAll();
+      return await this.bookingsService.findAll();
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  @Get('me')
+  async findMyBookings(@Request() req: any) {
+    try {
+      const userFromToken = req.user;
+      return await this.bookingsService.findByClient(userFromToken.sub);
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
@@ -45,7 +56,7 @@ export class BookingsController {
   @Get(':id')
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
-      await this.bookingsService.findOne(id);
+      return await this.bookingsService.findOne(id);
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
@@ -58,7 +69,7 @@ export class BookingsController {
     @Body() updateBookingDto: UpdateBookingDto,
   ) {
     try {
-      await this.bookingsService.update(id, updateBookingDto);
+      return await this.bookingsService.update(id, updateBookingDto);
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
@@ -78,17 +89,28 @@ export class BookingsController {
   @Roles([Role.Client, Role.Admin])
   async cancel(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
-      await this.bookingsService.cancel(id);
+      return await this.bookingsService.cancel(id);
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
   }
 
   @Get('client/:id')
-  @Roles([Role.Client, Role.Admin])
+  @Roles([Role.Worker, Role.Admin])
   async findByClient(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
-      await this.bookingsService.findByClient(id);
+      return await this.bookingsService.findByClient(id);
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  @Get('worker/me')
+  @Roles([Role.Worker])
+  async findMyWorkerBookings(@Request() req: any) {
+    try {
+      const userFromToken = req.user;
+      return await this.bookingsService.findByWorker(userFromToken.sub);
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
@@ -98,7 +120,7 @@ export class BookingsController {
   @Roles([Role.Admin, Role.Worker])
   async findByWorker(@Param('id', new ParseUUIDPipe()) id: string) {
     try {
-      await this.bookingsService.findByWorker(id);
+      return await this.bookingsService.findByWorker(id);
     } catch (error) {
       throw new HttpException(error.message, 400);
     }

@@ -33,7 +33,7 @@ export class Service extends Model<Service> {
 
   @AllowNull(false)
   @Column
-  duration: number;
+  durationInMinutes: number;
 
   @AllowNull(false)
   @Column({

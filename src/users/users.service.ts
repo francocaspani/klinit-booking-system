@@ -5,6 +5,7 @@ import { User } from './entities/user.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { EmailsService } from 'src/emails/emails.service';
 import { EmailType } from 'src/emails/dto/send-email.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
@@ -12,7 +13,12 @@ export class UsersService {
     @InjectModel(User)
     private userModel: typeof User,
     private emailService: EmailsService,
+    private jwtService: JwtService,
   ) {}
+
+  async findAll(): Promise<User[]> {
+    return await this.userModel.findAll();
+  }
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.userModel.findOne({
@@ -66,13 +72,15 @@ export class UsersService {
     return;
   }
 
-  async verifyEmail(id: string): Promise<User> {
+  async verifyEmail(id: string): Promise<{ access_token: string }> {
     const user = await this.userModel.findByPk(id);
     if (!user) {
       throw new Error('User not found');
     }
     await user.update({ emailVerified: true });
-    return user;
+    const payload = { email: user.email, sub: user.id };
+    const access_token = await this.jwtService.signAsync(payload);
+    return { access_token };
   }
 
   async getRole(id: string): Promise<Role> {
@@ -81,5 +89,14 @@ export class UsersService {
       throw new Error('User not found');
     }
     return user.role;
+  }
+
+  async setRole(id: string, role: Role): Promise<User> {
+    const user = await this.userModel.findByPk(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await user.update({ role });
+    return user;
   }
 }

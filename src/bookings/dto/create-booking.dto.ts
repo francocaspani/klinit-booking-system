@@ -1,19 +1,20 @@
 import {
   ArrayNotEmpty,
   IsBoolean,
-  IsDate,
+  IsDateString,
+  IsEmpty,
   IsNotEmpty,
-  IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
 
 export class CreateBookingDto {
-  @IsUUID(4)
+  @IsEmpty()
   id: string;
 
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   date: Date;
 
   @IsNotEmpty()
@@ -23,17 +24,17 @@ export class CreateBookingDto {
   @ArrayNotEmpty()
   services: string[];
 
+  @IsOptional()
   @IsBoolean()
   isCancelled: boolean;
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsEmpty()
   totalPrice: number;
 
+  @IsOptional()
   @IsString()
   workerId: string | null;
 
-  @IsNotEmpty()
-  @IsNumber()
-  totalDuration: number;
+  @IsEmpty()
+  totalDurationInMinutes: number;
 }

@@ -1,10 +1,11 @@
 import {
   IsBoolean,
+  IsEmpty,
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
-  IsUUID,
 } from 'class-validator';
 
 export enum Category {
@@ -13,7 +14,7 @@ export enum Category {
 }
 
 export class CreateServiceDto {
-  @IsUUID(4)
+  @IsEmpty()
   id: string;
 
   @IsNotEmpty()
@@ -21,6 +22,7 @@ export class CreateServiceDto {
   name: string;
 
   @IsString()
+  @IsOptional()
   description: string;
 
   @IsNotEmpty()
@@ -29,12 +31,13 @@ export class CreateServiceDto {
 
   @IsNotEmpty()
   @IsNumber()
-  duration: number;
+  durationInMinutes: number;
 
   @IsNotEmpty()
   @IsEnum(Category)
   category: Category;
 
   @IsBoolean()
+  @IsOptional()
   isAvailable: boolean;
 }

@@ -12,6 +12,15 @@ export class ServicesService {
   ) {}
 
   async create(createServiceDto: CreateServiceDto): Promise<Service> {
+    const service = await this.serviceModel.findOne({
+      where: {
+        name: createServiceDto.name,
+        category: createServiceDto.category,
+      },
+    });
+    if (service) {
+      throw new Error('Service already exists');
+    }
     return await this.serviceModel.create(createServiceDto as any);
   }
 
