@@ -73,6 +73,7 @@ export class EmailsService {
       await smtpTransport.sendMail(mailOptions);
     } catch (error: any) {
       console.error(error);
+      throw new Error('Error sending email');
     }
   }
 }

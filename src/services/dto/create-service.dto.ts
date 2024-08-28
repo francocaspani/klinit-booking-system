@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 
 export enum Category {
-  Comercial = 'comercial',
+  Comercial = 'commercial',
   Residential = 'residential',
 }
 
