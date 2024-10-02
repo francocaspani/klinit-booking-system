@@ -14,6 +14,7 @@ import {
 import { Service } from 'src/services/entities/service.model';
 import { User } from 'src/users/entities/user.model';
 import { BookingService } from './bookingService.model';
+import { BookingStatus } from '../dto/create-booking.dto';
 
 @Table
 export class Booking extends Model {
@@ -58,4 +59,10 @@ export class Booking extends Model {
 
   @BelongsTo(() => User, 'workerId')
   worker: User;
+
+  @AllowNull(false)
+  @Column({
+    type: DataType.ENUM('pending', 'completed', 'cancelled'),
+  })
+  status: BookingStatus;
 }

@@ -37,9 +37,9 @@ export class Service extends Model<Service> {
 
   @AllowNull(false)
   @Column({
-    type: DataType.ENUM('comercial', 'residential'),
+    type: DataType.ENUM('commercial', 'residential'),
   })
-  category: 'comercial' | 'residential';
+  category: 'commercial' | 'residential';
 
   @AllowNull(false)
   @Column({ defaultValue: true })

@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { ServicesService } from 'src/services/services.service';
 import { User } from 'src/users/entities/user.model';
 import { Service } from 'src/services/entities/service.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class BookingsService {
@@ -70,6 +71,7 @@ export class BookingsService {
       services: undefined,
       totalPrice,
       totalDurationInMinutes,
+      status: 'pending',
     });
 
     await booking.$set('client', userExists);
@@ -175,7 +177,7 @@ export class BookingsService {
     if (!booking) {
       throw new Error('Booking not found');
     }
-    await booking.update({ isCancelled: true });
+    await booking.update({ isCancelled: true, status: 'cancelled' });
     return booking;
   }
 
@@ -193,6 +195,27 @@ export class BookingsService {
   async findByWorker(workerId: string): Promise<Booking[]> {
     return this.bookingModel.findAll({
       where: { workerId },
+      include: [
+        { model: this.userModel, as: 'client' },
+        { model: this.userModel, as: 'worker' },
+        { model: this.serviceModel, as: 'services' },
+      ],
+    });
+  }
+
+  async findNextMonth(): Promise<Booking[]> {
+    const today = new Date();
+    const nextMonth = new Date();
+    nextMonth.setMonth(today.getMonth() + 1);
+
+    return this.bookingModel.findAll({
+      where: {
+        date: {
+          [Op.between]: [today, nextMonth],
+        },
+        isCancelled: false,
+        status: 'pending',
+      },
       include: [
         { model: this.userModel, as: 'client' },
         { model: this.userModel, as: 'worker' },

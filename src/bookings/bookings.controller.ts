@@ -43,6 +43,16 @@ export class BookingsController {
     }
   }
 
+  @Get('next-month')
+  @Roles([Role.Worker, Role.Admin])
+  async findNextMonth() {
+    try {
+      return await this.bookingsService.findNextMonth();
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
   @Get('me')
   async findMyBookings(@Request() req: any) {
     try {

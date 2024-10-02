@@ -9,6 +9,12 @@ import {
   IsUUID,
 } from 'class-validator';
 
+export enum BookingStatus {
+  Pending = 'pending',
+  Completed = 'completed',
+  Cancelled = 'cancelled',
+}
+
 export class CreateBookingDto {
   @IsEmpty()
   id: string;
@@ -37,4 +43,7 @@ export class CreateBookingDto {
 
   @IsEmpty()
   totalDurationInMinutes: number;
+
+  @IsString()
+  status: BookingStatus;
 }
